@@ -137,6 +137,7 @@ if uploaded_file and model and st.sidebar.checkbox("Make Prediction on New Data"
 
 
 # Generate PDF Report
+
 if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Report"):
     st.write("### Download Report")
 
@@ -182,10 +183,11 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
         pdf_buffer = generate_pdf_report(data_summary, model_metrics)
         st.download_button(
             label="Download PDF Report",
-            data=pdf_buffer,  # Pass the buffer directly
+            data=pdf_buffer.getvalue(),  # Use getvalue() to get the raw bytes
             file_name="churn_report.pdf",
             mime="application/pdf"
         )
+
 
 # Help Section
 if st.sidebar.checkbox("Help"):
