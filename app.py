@@ -161,7 +161,7 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
 
         # Save PDF to buffer
         pdf_buffer = io.BytesIO()
-        pdf.output(pdf_buffer, dest='S')  # 'S' returns a string
+        pdf.output(pdf_buffer)  # Correctly write PDF content to the buffer
         pdf_buffer.seek(0)  # Reset buffer position
         return pdf_buffer
 
@@ -182,7 +182,7 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
         pdf_buffer = generate_pdf_report(data_summary, model_metrics)
         st.download_button(
             label="Download PDF Report",
-            data=pdf_buffer.getvalue(),  # Ensure you get the raw bytes
+            data=pdf_buffer,  # Pass the buffer directly
             file_name="churn_report.pdf",
             mime="application/pdf"
         )
