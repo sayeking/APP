@@ -148,28 +148,29 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
 
     # Function to create a PDF report
     def generate_pdf_report(data_summary, model_metrics):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
 
-        # Title
-        pdf.cell(200, 10, txt="Customer Churn Prediction Report", ln=True, align="C")
+    # Title
+    pdf.cell(200, 10, txt="Customer Churn Prediction Report", ln=True, align="C")
 
-        # Data Summary
-        pdf.cell(200, 10, txt="Data Summary:", ln=True)
-        for key, value in data_summary.items():
-            pdf.cell(200, 10, txt=f"{key}: {value}", ln=True)
+    # Data Summary
+    pdf.cell(200, 10, txt="Data Summary:", ln=True)
+    for key, value in data_summary.items():
+        pdf.cell(200, 10, txt=f"{key}: {value}", ln=True)
 
-        # Model Metrics
-        pdf.cell(200, 10, txt="Model Metrics:", ln=True)
-        for metric, score in model_metrics.items():
-            pdf.cell(200, 10, txt=f"{metric}: {score:.2f}", ln=True)
+    # Model Metrics
+    pdf.cell(200, 10, txt="Model Metrics:", ln=True)
+    for metric, score in model_metrics.items():
+        pdf.cell(200, 10, txt=f"{metric}: {score:.2f}", ln=True)
 
-        # Save PDF to buffer
-        pdf_buffer = io.BytesIO()
-        pdf.output(pdf_buffer, dest='S')
-        pdf_buffer.seek(0)
-        return pdf_buffer
+    # Save PDF to buffer
+    pdf_buffer = io.BytesIO()
+    pdf.output(pdf_buffer, dest='S')  # 'S' returns a string
+    pdf_buffer.seek(0)  # Reset buffer position
+    return pdf_buffer
+
 
     # Prepare report content
     data_summary = {
@@ -184,14 +185,15 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
     }
 
     # Generate and download PDF
-    if st.button("Download Report"):
-        pdf_buffer = generate_pdf_report(data_summary, model_metrics)
-        st.download_button(
-            label="Download PDF Report",
-            data=pdf_buffer.getvalue(),
-            file_name="churn_report.pdf",
-            mime="application/pdf"
-        )
+    if st.button("Generate Report"):
+    pdf_buffer = generate_pdf_report(data_summary, model_metrics)
+    st.download_button(
+        label="Download PDF Report",
+        data=pdf_buffer.getvalue(),  # Ensure you get the raw bytes
+        file_name="churn_report.pdf",
+        mime="application/pdf"
+    )
+
 
 # Help Section
 if st.sidebar.checkbox("Help"):
