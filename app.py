@@ -112,35 +112,29 @@ if df is not None and st.sidebar.checkbox("Train Model"):
         st.error("No 'Churn' column found in dataset.")
 
 # Predict on new data
-if df is not None and model is not None and st.sidebar.checkbox("Make Prediction on New Data"):
+
+if uploaded_file and model and st.sidebar.checkbox("Make Prediction on New Data"):
     st.write("### Predict Customer Churn")
-    
-    # Ensure that model was trained and X_train is available
-    if "X_train" not in locals():
-        st.warning("Train the model first!")
-    else:
-        input_data = {}
-        for col in X_train.columns:
-            if "tenure" in col.lower():
-                input_data[col] = st.number_input(col, min_value=0, max_value=100, value=12)
-            elif "revenue" in col.lower():
-                input_data[col] = st.number_input(col, min_value=0.0, max_value=500.0, value=50.0)
-            elif "score" in col.lower():
-                input_data[col] = st.slider(col, 1, 10, 5)
-            else:
-                input_data[col] = st.number_input(col, min_value=0.0, max_value=100.0, value=10.0)
 
-        # Convert to DataFrame
-        input_df = pd.DataFrame([input_data])
+    # Input form
+    tenure = st.number_input("Tenure (Months)", min_value=0, max_value=100, value=12)
+    rev_per_month = st.number_input("Monthly Revenue", min_value=0.0, max_value=500.0, value=50.0)
+    cashback = st.number_input("Cashback", min_value=0.0, max_value=100.0, value=10.0)
+    service_score = st.slider("Service Score", 1, 10, 5)
 
-        # Ensure input_df has the same features as the training data
-        input_df = input_df.reindex(columns=X_train.columns, fill_value=0)
+    # Prepare input data
+    input_data = pd.DataFrame([[tenure, rev_per_month, cashback, service_score]],
+                              columns=['Tenure', 'rev_per_month', 'cashback', 'service_score'])
 
-        # Predict
-        if st.button("Predict"):
-            prediction = model.predict(input_df)
-            result = "Will Churn" if prediction[0] == 1 else "Will Not Churn"
-            st.write(f"Prediction: {result}")
+    # Ensure feature order matches training data
+    input_data = input_data.reindex(columns=X_train.columns, fill_value=0)
+
+    # Make prediction
+    if st.button("Predict"):
+        prediction = model.predict(input_data)
+        result = "Will Churn" if prediction[0] == 1 else "Will Not Churn"
+        st.write(f"Prediction: {result}")
+
 
 # Generate PDF Report
 if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Report"):
