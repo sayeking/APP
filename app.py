@@ -137,7 +137,6 @@ if uploaded_file and model and st.sidebar.checkbox("Make Prediction on New Data"
 
 
 # Generate PDF Report
-
 if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Report"):
     st.write("### Download Report")
 
@@ -160,11 +159,13 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
         for metric, score in model_metrics.items():
             pdf.cell(200, 10, txt=f"{metric}: {score:.2f}", ln=True)
 
-        # Save PDF to buffer
+        # Save PDF to buffer (S returns a string)
         pdf_buffer = io.BytesIO()
-        pdf.output(pdf_buffer)  # Correctly write PDF content to the buffer
+        pdf.output(pdf_buffer, 'S')  # 'S' returns PDF as a string
         pdf_buffer.seek(0)  # Reset buffer position
         return pdf_buffer
+        
+        
 
     # Prepare report content
     data_summary = {
@@ -183,7 +184,7 @@ if df is not None and model is not None and st.sidebar.checkbox("Generate PDF Re
         pdf_buffer = generate_pdf_report(data_summary, model_metrics)
         st.download_button(
             label="Download PDF Report",
-            data=pdf_buffer.getvalue(),  # Use getvalue() to get the raw bytes
+            data=pdf_buffer.getvalue(),  # Pass the buffer's content as raw bytes
             file_name="churn_report.pdf",
             mime="application/pdf"
         )
